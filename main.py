@@ -19,7 +19,7 @@ class ThreadScraper:
 
 	def get_subject(self):
 		subject = self.bs.find('span', {'class': 'subject'})
-		if subject is not None:
+		if subject is not None and subject.text != '':
 			title = subject.text.strip()
 			if '/' in title:
 				title = title.replace('/', '-')
