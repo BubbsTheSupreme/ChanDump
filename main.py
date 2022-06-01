@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import urllib3
+import requests
 import string
 import random
 import bs4
@@ -9,13 +9,8 @@ import os
 
 class ThreadScraper:
 	def __init__(self, url):
-		self.http = urllib3.PoolManager()
-		self.thread = self.http.request('GET', url)
-		with open('sauce.html', 'wb') as f:
-			f.write(self.thread.data)
-		with open('sauce.html', 'r') as html:
-			self.bs = bs4.BeautifulSoup(html, 'html.parser')
-		os.remove('sauce.html')
+		html = requests.get(url)
+		self.bs = bs4.BeautifulSoup(html.text, 'html.parser')
 
 	def get_subject(self):
 		subject = self.bs.find('span', {'class': 'subject'})
@@ -32,19 +27,21 @@ class ThreadScraper:
 		try:
 			os.mkdir(name)
 		except FileExistsError:
-			print(f'Directory {name} already exists, creating directory named {name} - 1')
-			os.mkdir(f'{name} - 1')
+			print(f'Updating Thread {name}')
 
 	def get_image_urls(self):
 		return self.bs.findAll('a', {'class': 'fileThumb'})
 
 	def download_image(self, image):
-		img = self.http.request('GET', f'https:{image["href"]}')
-		return img.data
+		img = requests.get(f'https:{image["href"]}')
+		return img.content
 	
 	def write_images(self, image, directory, filename):
-		with open(f'{directory}/{filename}', 'wb') as f:
-			f.write(image)
+		if os.path.exists(f'{directory}/{filename}'): 
+			print(f'{filename} already exists, no need to rewrite.')
+		else:
+			with open(f'{directory}/{filename}', 'wb') as f:
+				f.write(image)
 
 def main(url):
 	scraper = ThreadScraper(url)
