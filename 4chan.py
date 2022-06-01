@@ -9,8 +9,11 @@ import os
 
 class ThreadScraper:
 	def __init__(self, url):
-		html = requests.get(url)
-		self.bs = bs4.BeautifulSoup(html.text, 'html.parser')
+		if url == '' or url is None:
+			pass
+		else:
+			html = requests.get(url)
+			self.bs = bs4.BeautifulSoup(html.text, 'html.parser')
 
 	def get_subject(self):
 		subject = self.bs.find('span', {'class': 'subject'})
