@@ -2,12 +2,16 @@
 import requests
 import string
 import random
+import json
 import bs4
 import sys
 import os
 
 
 class ThreadScraper:
+
+	DOWNLOAD_DIR = ''
+
 	def __init__(self, url):
 		if url == '' or url is None:
 			pass
@@ -40,14 +44,17 @@ class ThreadScraper:
 		return img.content
 	
 	def write_images(self, image, directory, filename):
-		if os.path.exists(f'{directory}/{filename}'): 
+		if os.path.exists(f'{self.DOWNLOAD_DIR}/{directory}/{filename}'): 
 			print(f'{filename} already exists, no need to rewrite.')
 		else:
-			with open(f'{directory}/{filename}', 'wb') as f:
+			with open(f'{ThreadScraper.DOWNLOAD_DIR}/{directory}/{filename}', 'wb') as f:
 				f.write(image)
 
 def main(url):
+	with open('config.json', 'r') as js:
+		config = json.load(js.read())
 	scraper = ThreadScraper(url)
+	scraper.DOWNLOAD_DIR = config['DOWNLOAD_DIR']
 	sub = scraper.get_subject()
 	scraper.create_dir(sub)
 	images = scraper.get_image_urls()
