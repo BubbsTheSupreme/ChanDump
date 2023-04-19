@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 from scrape import ThreadScraper
-from client import ScrapeClient
-from server import ScrapeServer
+# from client import ScrapeClient
+# from server import ScrapeServer
 import json
 import sys
 import os
-
+import argparse
 
 def main(url:str):
 	with open('config.json', 'r') as f:
@@ -24,18 +24,15 @@ def main(url:str):
 			scraper.write_images(img_data, sub, filename)
 
 if __name__ == '__main__':
-	if len(sys.argv) > 3:
-		print('Too many args, for help use -h')
-	elif len(sys.argv) < 1:
-		print('No args given, for help use -h')
-	else:
-		if sys.argv[1] == '-h' or sys.argv[1] == '-H':
-			print('example: program_name link_to_thread')
-		elif sys.argv[1] == '-f':
-			with open(sys.argv[2], 'r') as f:
+	parser = argparse.ArgumentParser()
+	parser.add_argument('--file', required=False, help="")
+	parser.add_argument('thread', nargs=1)
+	args = parser.parse_args()
+
+	if args.file is not None:
+		with open(args.file, 'r') as f:
 				threads = f.readlines()
-			for thread in threads:
-				main(thread)
-		else:
-			main(sys.argv[1])
-			
+		for thread in threads:
+			main(thread)
+	else:
+		main(args.thread[0])
