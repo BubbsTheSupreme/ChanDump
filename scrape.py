@@ -9,7 +9,7 @@ import os
 class ThreadScraper:
 
 	def __init__(self, url, download_dir):
-		self.DOWNLOAD_DIR = download_dir
+		self.dump_path = download_dir
 		if url == '' or url is None:
 			pass
 		else:
@@ -29,7 +29,7 @@ class ThreadScraper:
 
 	def create_dir(self, name):
 		try:
-			os.mkdir(f'{self.DOWNLOAD_DIR}/{name}')
+			os.mkdir(f'{self.dump_path}/{name}')
 		except FileExistsError:
 			print(f'Updating Thread {name}')
 
@@ -41,8 +41,8 @@ class ThreadScraper:
 		return img.content
 	
 	def write_images(self, image, directory, filename):
-		if os.path.exists(f'{self.DOWNLOAD_DIR}/{directory}/{filename}'): 
+		if os.path.exists(f'{self.dump_path}/{directory}/{filename}'): 
 			print(f'{filename} already exists, no need to rewrite.')
 		else:
-			with open(f'{self.DOWNLOAD_DIR}/{directory}/{filename}', 'wb') as f:
+			with open(f'{self.dump_path}/{directory}/{filename}', 'wb') as f:
 				f.write(image)
